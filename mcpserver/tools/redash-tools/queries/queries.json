@@ -1,0 +1,130 @@
+{
+  "push_campaign_logs": {
+    "description": "Fetch campaign logs get push campaign logs",
+    "required": ["day", "campaign_id"],
+    "optional": ["keyword_to_search", "limit"],
+    "defaults": {"limit": 10, "keyword_to_search": "%"},
+    "config_ignore": ["env", "corr_id", "tag_subservice", "log_type", "log_tag", "method", "log_level", "kafka_offset", "topic", "ephemeral_id", "kafka_partition", "agent", "request_id", "offset", "region", "inst_id", "raw_db_name", "path", "cloud_provider", "py_version", "tag_business", "topic", "version", "type", "hostname", "file", "pid", "tag_architecture_type", "tag_service"],
+    "dc_config": {
+      "DC01": {
+        "data_source_id": 8,
+        "query_id": 1551,
+        "s3_bucket": "moe-dataplatform-us",
+        "query": "ALTER TABLE moeinternal_datalake.logs_treysor_campaigns DROP IF EXISTS PARTITION (log_type='campaigns.pushlogs' ,day='{{day}}') ;\nALTER TABLE moeinternal_datalake.logs_treysor_campaigns ADD IF NOT EXISTS PARTITION (log_type='campaigns.pushlogs' ,day='{{day}}') location 's3://moe-dataplatform-us/datalake/treysor-logs/logs.treysor.campaigns/log_type=campaigns.pushlogs/day={{day}}/';\n\nSELECT msg, cid, campaign_id FROM moeinternal_datalake.logs_treysor_campaigns\nWHERE log_type='campaigns.pushlogs'\nAND day='{{day}}'\nAND msg like '%{{campaign_id}}%' AND msg like '%{{keyword_to_search}}%'\nLIMIT {{limit}}"
+      },
+      "DC02": {
+        "data_source_id": 1,
+        "query_id": 503,
+        "s3_bucket": "moe-dataplatform-eu",
+        "query": "ALTER TABLE moeinternal_datalake.logs_treysor_campaigns DROP IF EXISTS PARTITION (log_type='campaigns.pushlogs' ,day='{{day}}') ;\nALTER TABLE moeinternal_datalake.logs_treysor_campaigns ADD IF NOT EXISTS PARTITION (log_type='campaigns.pushlogs' ,day='{{day}}') location 's3://moe-dataplatform-eu/datalake/treysor-logs/logs.treysor.campaigns/log_type=campaigns.pushlogs/day={{day}}/';\n\nSELECT msg, cid, campaign_id FROM moeinternal_datalake.logs_treysor_campaigns\nWHERE log_type='campaigns.pushlogs'\nAND day='{{day}}'\nAND msg like '%{{campaign_id}}%' AND msg like '%{{keyword_to_search}}%'\nLIMIT {{limit}}"
+      },
+      "DC03": {
+        "data_source_id": 6,
+        "query_id": 933,
+        "s3_bucket": "moe-dataplatform-ap",
+        "query": "ALTER TABLE moeinternal_datalake.logs_treysor_campaigns ADD IF NOT EXISTS PARTITION (log_type='campaigns.pushlogs' ,day='{{day}}') location 's3://moe-dataplatform-ap/datalake/treysor-logs/logs.treysor.campaigns/log_type=campaigns.pushlogs/day={{day}}/';\nSELECT msg, cid, campaign_id FROM moeinternal_datalake.logs_treysor_campaigns WHERE log_type='campaigns.pushlogs' AND day='{{day}}' AND msg LIKE '%{{campaign_id}}%' AND msg LIKE '%{{keyword_to_search}}%' LIMIT {{limit}};"
+      },
+      "DC04": {
+        "data_source_id": 1,
+        "query_id": 303,
+        "s3_bucket": "moe-dataplatform-us2",
+        "query": "ALTER TABLE moeinternal_datalake.logs_treysor_campaigns DROP IF EXISTS PARTITION (log_type='campaigns.pushlogs' ,day='{{day}}') ;\nALTER TABLE moeinternal_datalake.logs_treysor_campaigns ADD IF NOT EXISTS PARTITION (log_type='campaigns.pushlogs' ,day='{{day}}') location 's3://moe-dataplatform-us2/datalake/treysor-logs/logs.treysor.campaigns/log_type=campaigns.pushlogs/day={{day}}/';\n\nSELECT msg, cid, campaign_id FROM moeinternal_datalake.logs_treysor_campaigns\nWHERE log_type='campaigns.pushlogs'\nAND day='{{day}}'\nAND msg like '%{{campaign_id}}%' AND msg like '%{{keyword_to_search}}%'\nLIMIT {{limit}}"
+      }
+    }
+  },
+  "whatsapp_logs": {
+    "description": "Fetch WhatsApp logs",
+    "required": ["day", "campaign_id"],
+    "optional": ["keyword_to_search", "limit"],
+    "defaults": {"limit": 10, "keyword_to_search": "%"},
+    "config_ignore": ["env", "corr_id", "tag_subservice", "log_type", "log_tag", "method", "log_level", "kafka_offset", "topic", "ephemeral_id", "kafka_partition", "agent", "request_id", "offset", "region", "inst_id", "raw_db_name", "path", "cloud_provider", "py_version", "tag_business", "topic", "version", "type", "hostname", "file", "pid", "tag_architecture_type", "tag_service"],
+    "dc_config": {
+      "DC01": {
+        "data_source_id": 8,
+        "query_id": 1551,
+        "s3_bucket": "moe-dataplatform-us",
+        "query": "ALTER TABLE moeinternal_datalake.logs_treysor_campaigns DROP IF EXISTS PARTITION (log_type='campaigns.outbound.whatsapp' ,day='{{day}}') ;\nALTER TABLE moeinternal_datalake.logs_treysor_campaigns ADD IF NOT EXISTS PARTITION (log_type='campaigns.outbound.whatsapp' ,day='{{day}}') location 's3://moe-dataplatform-us/datalake/treysor-logs/logs.treysor.campaigns/log_type=campaigns.outbound.whatsapp/day={{day}}/';\n\nSELECT msg, cid, campaign_id FROM moeinternal_datalake.logs_treysor_campaigns\nWHERE log_type='campaigns.outbound.whatsapp'\nAND day='{{day}}'\nAND msg like '%{{campaign_id}}%' AND msg like '%{{keyword_to_search}}%'\nLIMIT {{limit}}"
+      },
+      "DC02": {
+        "data_source_id": 1,
+        "query_id": 503,
+        "s3_bucket": "moe-dataplatform-eu",
+        "query": "ALTER TABLE moeinternal_datalake.logs_treysor_campaigns DROP IF EXISTS PARTITION (log_type='campaigns.outbound.whatsapp' ,day='{{day}}') ;\nALTER TABLE moeinternal_datalake.logs_treysor_campaigns ADD IF NOT EXISTS PARTITION (log_type='campaigns.outbound.whatsapp' ,day='{{day}}') location 's3://moe-dataplatform-eu/datalake/treysor-logs/logs.treysor.campaigns/log_type=campaigns.outbound.whatsapp/day={{day}}/';\n\nSELECT msg, cid, campaign_id FROM moeinternal_datalake.logs_treysor_campaigns\nWHERE log_type='campaigns.outbound.whatsapp'\nAND day='{{day}}'\nAND msg like '%{{campaign_id}}%' AND msg like '%{{keyword_to_search}}%'\nLIMIT {{limit}}"
+      },
+      "DC03": {
+        "data_source_id": 6,
+        "query_id": 933,
+        "s3_bucket": "moe-dataplatform-ap",
+        "query": "ALTER TABLE moeinternal_datalake.logs_treysor_campaigns ADD IF NOT EXISTS PARTITION (log_type='campaigns.outbound.whatsapp' ,day='{{day}}') location 's3://moe-dataplatform-ap/datalake/treysor-logs/logs.treysor.campaigns/log_type=campaigns.outbound.whatsapp/day={{day}}/';\nSELECT msg, cid, campaign_id FROM moeinternal_datalake.logs_treysor_campaigns WHERE log_type='campaigns.outbound.whatsapp' AND day='{{day}}' AND msg LIKE '%{{campaign_id}}%' AND msg LIKE '%{{keyword_to_search}}%' LIMIT {{limit}};"
+      },
+      "DC04": {
+        "data_source_id": 1,
+        "query_id": 303,
+        "s3_bucket": "moe-dataplatform-us2",
+        "query": "ALTER TABLE moeinternal_datalake.logs_treysor_campaigns DROP IF EXISTS PARTITION (log_type='campaigns.outbound.whatsapp' ,day='{{day}}') ;\nALTER TABLE moeinternal_datalake.logs_treysor_campaigns ADD IF NOT EXISTS PARTITION (log_type='campaigns.outbound.whatsapp' ,day='{{day}}') location 's3://moe-dataplatform-us2/datalake/treysor-logs/logs.treysor.campaigns/log_type=campaigns.outbound.whatsapp/day={{day}}/';\n\nSELECT msg, cid, campaign_id FROM moeinternal_datalake.logs_treysor_campaigns\nWHERE log_type='campaigns.outbound.whatsapp'\nAND day='{{day}}'\nAND msg like '%{{campaign_id}}%' AND msg like '%{{keyword_to_search}}%'\nLIMIT {{limit}}"
+      }
+    }
+  },
+  "sms_logs": {
+    "description": "Fetch SMS Channel Specific logs",
+    "required": ["day", "campaign_id"],
+    "optional": ["keyword_to_search", "limit"],
+    "defaults": {"limit": 10, "keyword_to_search": "%"},
+    "config_ignore": ["env", "corr_id", "tag_subservice", "log_type", "log_tag", "method", "log_level", "kafka_offset", "topic", "ephemeral_id", "kafka_partition", "agent", "request_id", "offset", "region", "inst_id", "raw_db_name", "path", "cloud_provider", "py_version", "tag_business", "topic", "version", "type", "hostname", "file", "pid", "tag_architecture_type", "tag_service"],
+    "dc_config": {
+      "DC01": {
+        "data_source_id": 8,
+        "query_id": 1551,
+        "s3_bucket": "moe-dataplatform-us",
+        "query": "ALTER TABLE moeinternal_datalake.logs_treysor_campaigns DROP IF EXISTS PARTITION (log_type='campaigns.sms' ,day='{{day}}') ;\nALTER TABLE moeinternal_datalake.logs_treysor_campaigns ADD IF NOT EXISTS PARTITION (log_type='campaigns.sms' ,day='{{day}}') location 's3://moe-dataplatform-us/datalake/treysor-logs/logs.treysor.campaigns/log_type=campaigns.sms/day={{day}}/';\n\nSELECT msg, cid, campaign_id FROM moeinternal_datalake.logs_treysor_campaigns\nWHERE log_type='campaigns.sms'\nAND day='{{day}}'\nAND msg like '%{{campaign_id}}%' AND msg like '%{{keyword_to_search}}%'\nLIMIT {{limit}}"
+      },
+      "DC02": {
+        "data_source_id": 1,
+        "query_id": 503,
+        "s3_bucket": "moe-dataplatform-eu",
+        "query": "ALTER TABLE moeinternal_datalake.logs_treysor_campaigns DROP IF EXISTS PARTITION (log_type='campaigns.sms' ,day='{{day}}') ;\nALTER TABLE moeinternal_datalake.logs_treysor_campaigns ADD IF NOT EXISTS PARTITION (log_type='campaigns.sms' ,day='{{day}}') location 's3://moe-dataplatform-eu/datalake/treysor-logs/logs.treysor.campaigns/log_type=campaigns.sms/day={{day}}/';\n\nSELECT msg, cid, campaign_id FROM moeinternal_datalake.logs_treysor_campaigns\nWHERE log_type='campaigns.sms'\nAND day='{{day}}'\nAND msg like '%{{campaign_id}}%' AND msg like '%{{keyword_to_search}}%'\nLIMIT {{limit}}"
+      },
+      "DC03": {
+        "data_source_id": 6,
+        "query_id": 933,
+        "s3_bucket": "moe-dataplatform-ap",
+        "query": "ALTER TABLE moeinternal_datalake.logs_treysor_campaigns ADD IF NOT EXISTS PARTITION (log_type='campaigns.sms' ,day='{{day}}') location 's3://moe-dataplatform-ap/datalake/treysor-logs/logs.treysor.campaigns/log_type=campaigns.sms/day={{day}}/';\nSELECT msg, cid, campaign_id FROM moeinternal_datalake.logs_treysor_campaigns WHERE log_type='campaigns.sms' AND day='{{day}}' AND msg LIKE '%{{campaign_id}}%' AND msg LIKE '%{{keyword_to_search}}%' LIMIT {{limit}};"
+      },
+      "DC04": {
+        "data_source_id": 1,
+        "query_id": 303,
+        "s3_bucket": "moe-dataplatform-us2",
+        "query": "ALTER TABLE moeinternal_datalake.logs_treysor_campaigns DROP IF EXISTS PARTITION (log_type='campaigns.sms' ,day='{{day}}') ;\nALTER TABLE moeinternal_datalake.logs_treysor_campaigns ADD IF NOT EXISTS PARTITION (log_type='campaigns.sms' ,day='{{day}}') location 's3://moe-dataplatform-us2/datalake/treysor-logs/logs.treysor.campaigns/log_type=campaigns.sms/day={{day}}/';\n\nSELECT msg, cid, campaign_id FROM moeinternal_datalake.logs_treysor_campaigns\nWHERE log_type='campaigns.sms'\nAND day='{{day}}'\nAND msg like '%{{campaign_id}}%' AND msg like '%{{keyword_to_search}}%'\nLIMIT {{limit}}"
+      }
+    }
+  },
+  "sent_logs": {
+    "description": "Fetch Sent logs from different data sources depending on datacenter",
+    "required": ["day", "db_name", "campaign_id"],
+    "optional": ["keyword_to_search", "limit"],
+    "defaults": {"limit": 10, "keyword_to_search": "%"},
+    "config_ignore": ["env", "corr_id", "tag_subservice", "log_type", "log_tag", "method", "log_level", "kafka_offset", "topic", "ephemeral_id", "kafka_partition", "agent", "request_id", "offset", "region", "inst_id", "raw_db_name", "path", "cloud_provider", "py_version", "tag_business", "topic", "version", "type", "hostname", "file", "pid", "tag_architecture_type", "tag_service"],
+    "dc_config": {
+      "DC01": {
+        "data_source_id": 8,
+        "query_id": 352,
+        "query": "SELECT msg FROM moeinternal_datalake.logs_push WHERE (db_name='{{db_name}}' or db_name='{{db_name}}Processed') AND DAY='{{day}}' AND msg LIKE '%{{campaign_id}}%' AND msg LIKE '%{{keyword_to_search}}%' LIMIT {{limit}}"
+      },
+      "DC02": {
+        "data_source_id": 1,
+        "query_id": 43,
+        "query": "SELECT msg FROM moeinternal_datalake.logs_push WHERE (db_name='{{db_name}}' or db_name='{{db_name}}Processed') AND DAY='{{day}}' AND msg LIKE '%{{campaign_id}}%' AND msg LIKE '%{{keyword_to_search}}%' LIMIT {{limit}}"
+      },
+      "DC03": {
+        "data_source_id": 6,
+        "query_id": 90,
+        "query": "SELECT msg FROM moeinternal_datalake.logs_push WHERE (db_name='{{db_name}}' or db_name='{{db_name}}Processed') AND DAY='{{day}}' AND msg LIKE '%{{campaign_id}}%' AND msg LIKE '%{{keyword_to_search}}%' LIMIT {{limit}}"
+      },
+      "DC04": {
+        "data_source_id": 1,
+        "query_id": 357,
+        "query": "ALTER TABLE moeinternal_datalake.kafka_core_logs_push DROP IF EXISTS PARTITION (day='{{day}}'); ALTER TABLE moeinternal_datalake.kafka_core_logs_push ADD IF NOT EXISTS PARTITION (day='{{day}}') location 's3://moe-dataplatform-us2/datalake/kafka-core/logs.push/day={{day}}'; SELECT msg FROM moeinternal_datalake.kafka_core_logs_push WHERE day='{{day}}' AND msg LIKE '%{{campaign_id}}%' AND msg LIKE '%{{keyword_to_search}}%' order by json_extract_scalar(msg, '$[\"kafka_timestamp\"]') desc LIMIT {{limit}}"
+      }
+    }
+  }
+}

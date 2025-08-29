@@ -1,0 +1,31 @@
+{
+  "name": "moengage-mcp-server",
+  "version": "1.0.0",
+  "description": "MoeEngage MCP Server - A Model Context Protocol server for MoeEngage tools and services",
+  "main": "mcp-server.js",
+  "type": "module",
+  "engines": {
+    "node": ">=20.11.0"
+  },
+  "scripts": {
+    "start": "node mcp-server.js",
+    "dev": "node --watch mcp-server.js",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "docker:build": "docker build -t moe-mcp-server .",
+    "docker:run": "docker run --env-file .env -p 8080:8080 moe-mcp-server"
+  },
+  "keywords": ["mcp", "moengage", "server", "api", "tools"],
+  "author": "MoeEngage",
+  "license": "ISC",
+  "dependencies": {
+    "@coinpaprika/api-nodejs-client": "^2.0.0",
+    "@modelcontextprotocol/sdk": "^1.16.0",
+    "axios": "^1.10.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.21.2",
+    "js-yaml": "^4.1.0",
+    "winston": "^3.17.0",
+    "zod": "^3.25.76"
+  }
+}

@@ -1,0 +1,146 @@
+datacenters:
+  DC01:
+    url: "https://redash.prod-us-east-1.moengage.com"
+    protocol: "https"
+    api_key: "${REDASH_DC01_API_KEY}"
+  DC02:
+    url: "https://redash.prod-eu-central-1.moengage.com" 
+    protocol: "https"
+    api_key: "${REDASH_DC02_API_KEY}"
+  DC03:
+    url: "https://redash.prod-ap-south-1.moengage.com"
+    protocol: "https"
+    api_key: "${REDASH_DC03_API_KEY}"
+  DC04:
+    url: "http://redash.prod-us-east-2-c2.moengage.com"
+    protocol: "http"
+    api_key: "${REDASH_DC04_API_KEY}"
+
+auth:
+  # Global fallback API key (can still be overridden by environment variable)
+  fallback_key: "${REDASH_FALLBACK_API_KEY}"
+  # Environment variable support for global override
+  global_api_key_env: "REDASH_API_KEY"
+
+defaults:
+  timeout: 1000000
+  max_poll_tries: 70
+  poll_interval: 2000
+
+headers:
+  Accept: "application/json, text/plain, */*"
+  Accept-Language: "en-GB,en-US;q=0.9,en;q=0.8"
+  Connection: "keep-alive"
+  Content-Type: "application/json;charset=UTF-8"
+  Sec-Fetch-Dest: "empty"
+  Sec-Fetch-Mode: "cors"
+  Sec-Fetch-Site: "same-origin"
+  User-Agent: "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36"
+  sec-ch-ua: '"Google Chrome";v="137", "Chromium";v="137", "Not/A)Brand";v="24"'
+  sec-ch-ua-mobile: "?0"
+  sec-ch-ua-platform: '"macOS"'
+
+tools:
+  get_push_campaign_logs:
+    description: "Fetch detailed push campaign logs from the logs_treysor_campaigns > campaigns.pushlogs"
+    query_type: "push_campaign_logs"
+    parameters:
+      - name: "datacenter"
+        type: "str"
+        required: true
+        description: "The datacenter identifier (DC01, DC02, DC03, DC04)"
+      - name: "day"
+        type: "str"
+        required: true
+        description: "Date to query on specific day (YYYY-MM-DD format)"
+      - name: "campaign_id"
+        type: "str"
+        required: true
+        description: "Campaign ID - primary search string (always required)"
+      - name: "keyword_to_search"
+        type: "str"
+        required: false
+        description: "Additional keyword to search for in logs (optional, defaults to '%' for all)"
+      - name: "limit"
+        type: "int"
+        required: false
+        description: "Limit of logs to retrieve (default: 10)"
+
+  get_whatsapp_campaign_logs:
+    description: "Fetch detailed WhatsApp campaign logs from the logs_treysor_campaigns > campaigns.outbound.whatsapp. Here you will get granular details like the payload we sent to user > WhatsApp messages, any errors, personalization failure and more about WhatsApp campaign logs. like callbacks from bsps like read, delivered clicked etc even more. For Event Triggered Campaigns if campaign created is more than 59 days > then search with date from when the issue is happening or you can ask the user for the date from it is happening or you can try this once then if nothing usefull found you can ask the user to provide more details. here for keyword search pass only one keyword at a time <keyword1>|<keyword2> not supported only one keyword at time so if you want to search multiple keyword fire the query multiple times::"
+    query_type: "whatsapp_logs"
+    parameters:
+      - name: "datacenter"
+        type: "str"
+        required: true
+        description: "The datacenter identifier (DC01, DC02, DC03, DC04)"
+      - name: "day"
+        type: "str"
+        required: true
+        description: "Date to query on specific day (YYYY-MM-DD format)"
+      - name: "campaign_id"
+        type: "str"
+        required: true
+        description: "Campaign ID - primary search string (always required)"
+      - name: "keyword_to_search"
+        type: "str"
+        required: false
+        description: "Additional keyword to search for in logs (optional, defaults to '%' for all)"
+      - name: "limit"
+        type: "int"
+        required: false
+        description: "Limit of logs to retrieve (default: 10)"
+
+  get_sent_logs:
+    description: "Fetch sent logs for all types of campaigns from logs.push or kafka_core_logs_push depending on datacenter"
+    query_type: "sent_logs"
+    parameters:
+      - name: "datacenter"
+        type: "str"
+        required: true
+        description: "The datacenter identifier (DC01, DC02, DC03, DC04)"
+      - name: "day"
+        type: "str"
+        required: true
+        description: "Date to query on specific day (YYYY-MM-DD format)"
+      - name: "db_name"
+        type: "str"
+        required: true
+        description: "Database name or workspace"
+      - name: "campaign_id"
+        type: "str"
+        required: true
+        description: "Campaign ID - primary search string (always required)"
+      - name: "keyword_to_search"
+        type: "str"
+        required: false
+        description: "Additional keyword to search for (optional, defaults to '%' for all)"
+      - name: "limit"
+        type: "int"
+        required: false
+        description: "Limit of logs to retrieve (default: 10)"
+
+  get_sms_campaign_logs:
+    description: "Fetch SMS Channel Specific logs"
+    query_type: "sms_logs"
+    parameters:
+      - name: "datacenter"
+        type: "str"
+        required: true
+        description: "The datacenter identifier (DC01, DC02, DC03, DC04)"
+      - name: "day"
+        type: "str"
+        required: true
+        description: "Date to query on specific day (YYYY-MM-DD format)"
+      - name: "campaign_id"
+        type: "str"
+        required: true
+        description: "Campaign ID - primary search string (always required)"
+      - name: "keyword_to_search"
+        type: "str"
+        required: false
+        description: "Additional keyword to search for in logs (optional, defaults to '%' for all)"
+      - name: "limit"
+        type: "int"
+        required: false
+        description: "Limit of logs to retrieve (default: 10)"

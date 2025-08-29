@@ -1,0 +1,12 @@
+google-adk==1.4.2
+litellm==1.72.1
+pydantic>=2.0.0
+numpy>=1.21.0
+python-dotenv>=1.0.0
+pytz>=2023.3
+google-cloud-discoveryengine>=0.11.10
+openinference-instrumentation-google-adk 
+arize-phoenix-otel
+psycopg2-binary
+asyncpg
+gunicorn

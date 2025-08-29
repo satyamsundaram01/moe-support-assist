@@ -1,0 +1,23 @@
+/* Clean paragraph with citations styling */
+.paragraph-with-citations {
+  margin-bottom: 1rem;
+}
+
+.paragraph-with-citations:last-child {
+  margin-bottom: 0;
+}
+
+/* Ensure citations appear inline with text */
+.paragraph-with-citations p {
+  display: inline;
+}
+
+.paragraph-with-citations button[class*="citation"] {
+  vertical-align: baseline;
+  margin-left: 0.25rem;
+}
+
+/* Prevent citation chips from breaking to new lines */
+.paragraph-with-citations span:has(button[class*="citation"]) {
+  white-space: nowrap;
+}

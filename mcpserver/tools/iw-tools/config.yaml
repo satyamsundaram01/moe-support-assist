@@ -1,0 +1,73 @@
+apis:
+  get_app_info:
+    description: "Fetch WorkSpace or db information from MoeEngage"
+    url: "https://moe-internalworks-ui.moengage.com/{datacenter}/admin/info/app"
+    method: "POST"
+    headers:
+      Accept: "*/*"
+      Content-Type: "text/plain;charset=UTF-8"
+      authorisation: "${IW_AUTHORIZATION_TOKEN}"
+    parameters:
+      - name: "datacenter"
+        type: "str"
+        required: true
+        description: "The datacenter identifier (e.g., DC03, DC01, etc.)"
+      - name: "app_key"
+        type: "str"
+        required: true
+        description: "The application key for the MoeEngage app"
+    payload_mapping:
+      appKey: "app_key"
+    url_params:
+      datacenter: "datacenter"
+    timeout: 30.0
+
+  get_campaign_info:
+    description: "Fetch campaign details from MoeEngage by campaign id. here ask the user about the datacenter and campaign id and db_name cause without them we cannot query the details"
+    url: "https://moe-internalworks-ui.moengage.com/{datacenter}/admin/info/campaign"
+    method: "POST"
+    headers:
+      Accept: "*/*"
+      Content-Type: "text/plain;charset=UTF-8"
+      authorisation: "${IW_AUTHORIZATION_TOKEN}"
+    parameters:
+      - name: "datacenter"
+        type: "str"
+        required: true
+        description: "The datacenter identifier (e.g., DC03, DC01, etc.)"
+      - name: "campaign_id"
+        type: "str"
+        required: true
+        description: "Campaign id"
+      - name: "db_name"
+        type: "str"
+        required: true
+        description: "Database name (workspace)"
+    payload_mapping:
+      db_name: "db_name"
+      field: 1
+      value: "campaign_id"
+      camp_response: false
+    url_params:
+      datacenter: "datacenter"
+    timeout: 100.0
+
+  search_kb:
+    description: "Search the knowledge base for a given question. Searches the MoeEngage knowledge base around the question asked with datasources like Zendesk, Confluence, public help docs etc."
+    url: "http://0.0.0.0:8081/ask"
+    method: "GET"
+    headers:
+      Accept-Language: "en-US,en;q=0.9"
+      Cache-Control: "no-cache"
+      Connection: "keep-alive"
+      Pragma: "no-cache"
+      Referer: "http://0.0.0.0:8081/docs"
+      accept: "application/json"
+    parameters:
+      - name: "question"
+        type: "str"
+        required: true
+        description: "The question to search in the knowledge base."
+    query_mapping:
+      question: "question"
+    timeout: 60.0
