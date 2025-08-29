@@ -1,0 +1,63 @@
+# .woodpecker.yml
+
+pipeline:
+  build_and_push:
+    image: alpine/git
+    pull: true
+    when:
+      event:
+        - push
+      branch:
+        - dev
+    
+    matrix:
+      - service: client
+        dir: client
+        dockerfile: Dockerfile
+        secrets: []
+        # secrets:
+        #   - VITE_OKTA_CLIENT_ID
+        #   - VITE_ZENDESK_API_TOKEN
+        #   - VITE_ZENDESK_EMAIL
+      - service: server
+        dir: server
+        dockerfile: Dockerfile
+        secrets: []
+        # secrets:
+        #   - GOOGLE_SERVICE_ACCOUNT_BASE64
+      - service: mcpserver
+        dir: mcpserver
+        dockerfile: Dockerfile
+        secrets: []
+
+    steps:
+      - name: build_and_push_image
+        image: docker:20.10.24-dind
+        privileged: true
+        secrets:
+          - ECR_ACCESS_KEY_ID
+          - ECR_SECRET_ACCESS_KEY
+        commands:
+          - SERVICE_NAME=${matrix.service}
+          - DOCKERFILE_PATH=${matrix.dir}/${matrix.dockerfile}
+          - BUILD_ARGS=""
+          - ECR_REPO="612427630422.dkr.ecr.ap-southeast-1.amazonaws.com/sre/moe-support-assist-${SERVICE_NAME}"
+          - AWS_REGION="ap-southeast-1"
+          - AWS_ACCOUNT_ID="612427630422"
+
+          # # Use `jq` to conditionally build the --build-arg string
+          # - >
+          #   if [ "${SERVICE_NAME}" == "client" ]; then
+          #     BUILD_ARGS="--build-arg VITE_OKTA_CLIENT_ID=${VITE_OKTA_CLIENT_ID} --build-arg VITE_ZENDESK_API_TOKEN=${VITE_ZENDESK_API_TOKEN} --build-arg VITE_ZENDESK_EMAIL=${VITE_ZENDESK_EMAIL}"
+          #   fi
+          # - >
+          #   if [ "${SERVICE_NAME}" == "server" ]; then
+          #     BUILD_ARGS="--build-arg GOOGLE_SERVICE_ACCOUNT_BASE64=${GOOGLE_SERVICE_ACCOUNT_BASE64}"
+          #   fi
+
+          # Build the Docker image
+          - docker build $BUILD_ARGS -t ${ECR_REPO}:latest -f ${DOCKERFILE_PATH} ${matrix.dir}
+
+          # Authenticate and push to ECR
+          - docker login -u AWS -p $(aws ecr get-login-password --region ${AWS_REGION}) ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com
+          - docker push ${ECR_REPO}:latest
