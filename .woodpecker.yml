@@ -33,6 +33,18 @@ variables:
   - &backend_options
     kubernetes:
       securityContext: *securityContext
+
+clone:
+  git:
+    image: 612427630422.dkr.ecr.ap-southeast-1.amazonaws.com/sre/woodpecker:plugin-git-2.5.0
+    settings:
+      tags: true
+    when:
+      - event: pull_request
+        branch: master
+      - event: push
+        branch: master
+      - event: tag
   
 steps:
   # The steps are defined as top-level keys
