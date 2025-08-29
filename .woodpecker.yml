@@ -62,7 +62,7 @@ steps:
       - AWS_ACCOUNT_ID="612427630422"
       - BUILD_ARGS=""
       # - BUILD_ARGS="--build-arg VITE_OKTA_CLIENT_ID=${VITE_OKTA_CLIENT_ID} --build-arg VITE_ZENDESK_API_TOKEN=${VITE_ZENDESK_API_TOKEN} --build-arg VITE_ZENDESK_EMAIL=${VITE_ZENDESK_EMAIL}"
-      - docker build $BUILD_ARGS -t ${ECR_REPO}:latest -f ${DOCKERFILE_PATH} client
+      - docker build $BUILD_ARGS -t "${ECR_REPO}:latest" -f ${DOCKERFILE_PATH} client
       - aws ecr get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com
       - docker push ${ECR_REPO}:latest
 
@@ -80,7 +80,7 @@ steps:
       - AWS_ACCOUNT_ID="612427630422"
       - BUILD_ARGS=""
       # - BUILD_ARGS="--build-arg GOOGLE_SERVICE_ACCOUNT_BASE64=${GOOGLE_SERVICE_ACCOUNT_BASE64}"
-      - docker build $BUILD_ARGS -t ${ECR_REPO}:latest -f ${DOCKERFILE_PATH} server
+      - docker build $BUILD_ARGS -t "${ECR_REPO}:latest" -f ${DOCKERFILE_PATH} server
       - aws ecr get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com
       - docker push ${ECR_REPO}:latest
 
@@ -96,7 +96,7 @@ steps:
       - ECR_REPO="612427630422.dkr.ecr.ap-southeast-1.amazonaws.com/sre/moe-support-assist-mcpserver"
       - AWS_REGION="ap-southeast-1"
       - AWS_ACCOUNT_ID="612427630422"
-      - docker build -t ${ECR_REPO}:latest -f ${DOCKERFILE_PATH} mcpserver
+      - docker build -t "${ECR_REPO}:latest" -f ${DOCKERFILE_PATH} mcpserver
       - aws ecr get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com
       - docker push ${ECR_REPO}:latest
 
@@ -106,5 +106,5 @@ steps:
   #   - VITE_ZENDESK_API_TOKEN
   #   - VITE_ZENDESK_EMAIL
   #   - GOOGLE_SERVICE_ACCOUNT_BASE64
-    # - aws_access_key_id
-    # - aws_secret_access_key
+  #   - aws_access_key_id
+  #   - aws_secret_access_key
