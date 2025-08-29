@@ -1,54 +1,48 @@
 # .woodpecker.yml
 
-pipeline:
-  build_and_push:
-    image: docker:20.10.24-dind
-    privileged: true
-    pull: true
-    when:
-      event: [push]
-      branch: [dev]
+build_and_push:
+  image: docker:20.10.24-dind
+  privileged: true
+  pull: true
+  when:
+    event: [push]
+    branch: [dev]
 
-    # The matrix defines the jobs to be run in parallel.
-    matrix:
-      - service: client
-        dir: client
-        secrets: [] # [VITE_OKTA_CLIENT_ID, VITE_ZENDESK_API_TOKEN, VITE_ZENDESK_EMAIL]
-      - service: server
-        dir: server
-        secrets: [] # [GOOGLE_SERVICE_ACCOUNT_BASE64]
-      - service: mcpserver
-        dir: mcpserver
-        secrets: []
+  matrix:
+    - service: client
+      dir: client
+      secrets: [] # [VITE_OKTA_CLIENT_ID, VITE_ZENDESK_API_TOKEN, VITE_ZENDESK_EMAIL]
+    - service: server
+      dir: server
+      secrets: [] # [GOOGLE_SERVICE_ACCOUNT_BASE64]
+    - service: mcpserver
+      dir: mcpserver
+      secrets: []
 
-    steps:
-      - name: build_and_push_image
-        image: docker:20.10.24-dind
-        commands:
-          # Define environment variables from the matrix
-          - SERVICE_NAME=${WOODPECKER_MATRIX_SERVICE}
-          - DOCKERFILE_PATH=${WOODPECKER_MATRIX_DIR}/Dockerfile
-          - ECR_REPO="612427630422.dkr.ecr.ap-southeast-1.amazonaws.com/sre/moe-support-assist-${SERVICE_NAME}"
-          - AWS_REGION="ap-southeast-1"
-          - AWS_ACCOUNT_ID="612427630422"
+  steps:
+    - name: build_and_push_image
+      image: docker:20.10.24-dind
+      commands:
+        - SERVICE_NAME=${WOODPECKER_MATRIX_SERVICE}
+        - DOCKERFILE_PATH=${WOODPECKER_MATRIX_DIR}/Dockerfile
+        - ECR_REPO="612427630422.dkr.ecr.ap-southeast-1.amazonaws.com/sre/moe-support-assist-${SERVICE_NAME}"
+        - AWS_REGION="ap-southeast-1"
+        - AWS_ACCOUNT_ID="612427630422"
 
-          # Get secrets from Woodpecker's built-in secrets store
-          # - >
-          #   if [ "${SERVICE_NAME}" == "client" ]; then
-          #     BUILD_ARGS="--build-arg VITE_OKTA_CLIENT_ID=${VITE_OKTA_CLIENT_ID} --build-arg VITE_ZENDESK_API_TOKEN=${VITE_ZENDESK_API_TOKEN} --build-arg VITE_ZENDESK_EMAIL=${VITE_ZENDESK_EMAIL}"
-          #   fi
-          # - >
-          #   if [ "${SERVICE_NAME}" == "server" ]; then
-          #     BUILD_ARGS="--build-arg GOOGLE_SERVICE_ACCOUNT_BASE64=${GOOGLE_SERVICE_ACCOUNT_BASE64}"
-          #   fi
-          # - >
-          #   if [ "${SERVICE_NAME}" == "mcpserver" ]; then
-          #     BUILD_ARGS=""
-          #   fi
+        # - >
+        #   if [ "${SERVICE_NAME}" == "client" ]; then
+        #     BUILD_ARGS="--build-arg VITE_OKTA_CLIENT_ID=${VITE_OKTA_CLIENT_ID} --build-arg VITE_ZENDESK_API_TOKEN=${VITE_ZENDESK_API_TOKEN} --build-arg VITE_ZENDESK_EMAIL=${VITE_ZENDESK_EMAIL}"
+        #   fi
+        # - >
+        #   if [ "${SERVICE_NAME}" == "server" ]; then
+        #     BUILD_ARGS="--build-arg GOOGLE_SERVICE_ACCOUNT_BASE64=${GOOGLE_SERVICE_ACCOUNT_BASE64}"
+        #   fi
+        # - >
+        #   if [ "${SERVICE_NAME}" == "mcpserver" ]; then
+        #     BUILD_ARGS=""
+        #   fi
 
-          # Build the Docker image
-          - docker build $BUILD_ARGS -t ${ECR_REPO}:latest -f ${DOCKERFILE_PATH} ${WOODPECKER_MATRIX_DIR}
+        - docker build $BUILD_ARGS -t ${ECR_REPO}:latest -f ${DOCKERFILE_PATH} ${WOODPECKER_MATRIX_DIR}
 
-          # Authenticate and push to ECR
-          - docker login -u AWS -p $(aws ecr get-login-password --region ${AWS_REGION}) ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com
-          - docker push ${ECR_REPO}:latest
+        - docker login -u AWS -p $(aws ecr get-login-password --region ${AWS_REGION}) ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com
+        - docker push ${ECR_REPO}:latest
