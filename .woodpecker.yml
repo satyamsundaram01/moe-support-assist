@@ -41,9 +41,9 @@ clone:
       tags: true
     when:
       - event: pull_request
-        branch: master
+        branch: main
       - event: push
-        branch: master
+        branch: main
       - event: tag
   
 steps:
@@ -53,7 +53,7 @@ steps:
     backend_options: *backend_options
     when:
       event: [push]
-      branch: dev
+      branch: main
     commands:
       - SERVICE_NAME=client
       - DOCKERFILE_PATH=client/Dockerfile
@@ -71,7 +71,7 @@ steps:
     backend_options: *backend_options
     when:
       event: [push]
-      branch: dev
+      branch: main
     commands:
       - SERVICE_NAME=server
       - DOCKERFILE_PATH=server/Dockerfile
@@ -89,7 +89,7 @@ steps:
     backend_options: *backend_options
     when:
       event: [push]
-      branch: dev
+      branch: main
     commands:
       - SERVICE_NAME=mcpserver
       - DOCKERFILE_PATH=mcpserver/Dockerfile
@@ -101,10 +101,10 @@ steps:
       - docker push ${ECR_REPO}:latest
 
   # Secrets must be defined for each step that needs them
-  # secrets:
-    # - VITE_OKTA_CLIENT_ID
-    # - VITE_ZENDESK_API_TOKEN
-    # - VITE_ZENDESK_EMAIL
-    # - GOOGLE_SERVICE_ACCOUNT_BASE64
+  secrets:
+    - VITE_OKTA_CLIENT_ID
+    - VITE_ZENDESK_API_TOKEN
+    - VITE_ZENDESK_EMAIL
+    - GOOGLE_SERVICE_ACCOUNT_BASE64
     # - aws_access_key_id
     # - aws_secret_access_key
