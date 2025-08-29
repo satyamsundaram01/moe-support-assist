@@ -1,48 +1,97 @@
 # .woodpecker.yml
 
-build_and_push:
-  image: docker:20.10.24-dind
-  privileged: true
-  pull: true
-  when:
-    event: [push]
-    branch: [dev]
+labels:
+  hostname: sre-dc-amd-agent
 
-  matrix:
+variables:
+  # The matrix configuration should be defined at the top
+  - &build_matrix
     - service: client
       dir: client
+      dockerfile: Dockerfile
       secrets: [] # [VITE_OKTA_CLIENT_ID, VITE_ZENDESK_API_TOKEN, VITE_ZENDESK_EMAIL]
     - service: server
       dir: server
+      dockerfile: Dockerfile
       secrets: [] # [GOOGLE_SERVICE_ACCOUNT_BASE64]
     - service: mcpserver
       dir: mcpserver
+      dockerfile: Dockerfile
       secrets: []
+  
+  # Other variables and aliases from your sample
+  - &nodeSelector
+    karpenter.sh/capacity-type: spot
+    kubernetes.io/arch: amd64
+    eks.moengage.io/nodepool-type: general
+  - &tolerations
+    - effect: NoSchedule
+      key: eks.moengage.io/nodepool-type
+      value: general
+  - &securityContext
+    privileged: true
+  - &backend_options
+    kubernetes:
+      securityContext: *securityContext
+  
+# The steps are defined as top-level keys
+build-and-push-client:
+  image: docker:20.10.24-dind
+  backend_options: *backend_options
+  when:
+    event: [push]
+    branch: dev
+  commands:
+    - SERVICE_NAME=client
+    - DOCKERFILE_PATH=client/Dockerfile
+    - ECR_REPO="612427630422.dkr.ecr.ap-southeast-1.amazonaws.com/sre/moe-support-assist-client"
+    - AWS_REGION="ap-southeast-1"
+    - AWS_ACCOUNT_ID="612427630422"
+    - BUILD_ARGS=""
+    # - BUILD_ARGS="--build-arg VITE_OKTA_CLIENT_ID=${VITE_OKTA_CLIENT_ID} --build-arg VITE_ZENDESK_API_TOKEN=${VITE_ZENDESK_API_TOKEN} --build-arg VITE_ZENDESK_EMAIL=${VITE_ZENDESK_EMAIL}"
+    - docker build $BUILD_ARGS -t ${ECR_REPO}:latest -f ${DOCKERFILE_PATH} client
+    - aws ecr get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com
+    - docker push ${ECR_REPO}:latest
 
-  steps:
-    - name: build_and_push_image
-      image: docker:20.10.24-dind
-      commands:
-        - SERVICE_NAME=${WOODPECKER_MATRIX_SERVICE}
-        - DOCKERFILE_PATH=${WOODPECKER_MATRIX_DIR}/Dockerfile
-        - ECR_REPO="612427630422.dkr.ecr.ap-southeast-1.amazonaws.com/sre/moe-support-assist-${SERVICE_NAME}"
-        - AWS_REGION="ap-southeast-1"
-        - AWS_ACCOUNT_ID="612427630422"
+build-and-push-server:
+  image: docker:20.10.24-dind
+  backend_options: *backend_options
+  when:
+    event: [push]
+    branch: dev
+  commands:
+    - SERVICE_NAME=server
+    - DOCKERFILE_PATH=server/Dockerfile
+    - ECR_REPO="612427630422.dkr.ecr.ap-southeast-1.amazonaws.com/sre/moe-support-assist-server"
+    - AWS_REGION="ap-southeast-1"
+    - AWS_ACCOUNT_ID="612427630422"
+    - BUILD_ARGS=""
+    # - BUILD_ARGS="--build-arg GOOGLE_SERVICE_ACCOUNT_BASE64=${GOOGLE_SERVICE_ACCOUNT_BASE64}"
+    - docker build $BUILD_ARGS -t ${ECR_REPO}:latest -f ${DOCKERFILE_PATH} server
+    - aws ecr get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com
+    - docker push ${ECR_REPO}:latest
 
-        # - >
-        #   if [ "${SERVICE_NAME}" == "client" ]; then
-        #     BUILD_ARGS="--build-arg VITE_OKTA_CLIENT_ID=${VITE_OKTA_CLIENT_ID} --build-arg VITE_ZENDESK_API_TOKEN=${VITE_ZENDESK_API_TOKEN} --build-arg VITE_ZENDESK_EMAIL=${VITE_ZENDESK_EMAIL}"
-        #   fi
-        # - >
-        #   if [ "${SERVICE_NAME}" == "server" ]; then
-        #     BUILD_ARGS="--build-arg GOOGLE_SERVICE_ACCOUNT_BASE64=${GOOGLE_SERVICE_ACCOUNT_BASE64}"
-        #   fi
-        # - >
-        #   if [ "${SERVICE_NAME}" == "mcpserver" ]; then
-        #     BUILD_ARGS=""
-        #   fi
+build-and-push-mcpserver:
+  image: docker:20.10.24-dind
+  backend_options: *backend_options
+  when:
+    event: [push]
+    branch: dev
+  commands:
+    - SERVICE_NAME=mcpserver
+    - DOCKERFILE_PATH=mcpserver/Dockerfile
+    - ECR_REPO="612427630422.dkr.ecr.ap-southeast-1.amazonaws.com/sre/moe-support-assist-mcpserver"
+    - AWS_REGION="ap-southeast-1"
+    - AWS_ACCOUNT_ID="612427630422"
+    - docker build -t ${ECR_REPO}:latest -f ${DOCKERFILE_PATH} mcpserver
+    - aws ecr get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com
+    - docker push ${ECR_REPO}:latest
 
-        - docker build $BUILD_ARGS -t ${ECR_REPO}:latest -f ${DOCKERFILE_PATH} ${WOODPECKER_MATRIX_DIR}
-
-        - docker login -u AWS -p $(aws ecr get-login-password --region ${AWS_REGION}) ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com
-        - docker push ${ECR_REPO}:latest
+# Secrets must be defined for each step that needs them
+secrets:
+  # - VITE_OKTA_CLIENT_ID
+  # - VITE_ZENDESK_API_TOKEN
+  # - VITE_ZENDESK_EMAIL
+  # - GOOGLE_SERVICE_ACCOUNT_BASE64
+  - aws_access_key_id
+  - aws_secret_access_key
