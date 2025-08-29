@@ -1,6 +1,6 @@
 FROM node:20-slim AS base
 
-# Set working directory
+# Set working dir
 WORKDIR /app
 
 # Add pnpm package manager

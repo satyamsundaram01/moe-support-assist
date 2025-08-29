@@ -48,7 +48,7 @@ clone:
   
 steps:
   # The steps are defined as top-level keys
-  prep: # build-and-push-client:
+  build-and-push-client:
     image: docker:20.10.24-dind
     backend_options: *backend_options
     when:
@@ -66,7 +66,7 @@ steps:
       - aws ecr get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com
       - docker push ${ECR_REPO}:latest
 
-  lint: # build-and-push-server:
+  build-and-push-server:
     image: docker:20.10.24-dind
     backend_options: *backend_options
     when:
@@ -84,7 +84,7 @@ steps:
       - aws ecr get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com
       - docker push ${ECR_REPO}:latest
 
-  test: # build-and-push-mcpserver:
+  build-and-push-mcpserver:
     image: docker:20.10.24-dind
     backend_options: *backend_options
     when:
