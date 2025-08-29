@@ -8,7 +8,7 @@ pipeline:
       event:
         - push
       branch:
-        - dev
+        - main
     
     matrix:
       - service: client
