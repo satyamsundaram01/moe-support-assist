@@ -101,10 +101,10 @@ steps:
       - docker push ${ECR_REPO}:latest
 
   # Secrets must be defined for each step that needs them
-  secrets:
-    - VITE_OKTA_CLIENT_ID
-    - VITE_ZENDESK_API_TOKEN
-    - VITE_ZENDESK_EMAIL
-    - GOOGLE_SERVICE_ACCOUNT_BASE64
+  # secrets:
+  #   - VITE_OKTA_CLIENT_ID
+  #   - VITE_ZENDESK_API_TOKEN
+  #   - VITE_ZENDESK_EMAIL
+  #   - GOOGLE_SERVICE_ACCOUNT_BASE64
     # - aws_access_key_id
     # - aws_secret_access_key
